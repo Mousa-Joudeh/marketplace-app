@@ -24,4 +24,27 @@ class ProviderController extends Controller
 
         return response()->json($providers);
     }
+
+    public function show(string $provider): JsonResponse
+    {
+        $profile = ProviderProfile::query()->findOrFail($provider);
+
+        return response()->json([
+            'data' => $profile->only([
+                'id',
+                'display_name',
+                'slug',
+                'city',
+                'district',
+                'public_address',
+                'tagline',
+                'bio',
+                'logo_path',
+                'cover_path',
+                'instagram_url',
+                'approval_status',
+                'created_at',
+            ]),
+        ]);
+    }
 }
