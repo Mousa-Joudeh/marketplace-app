@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrentAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProviderController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +45,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
         ->whereIn('type', array_keys(CatalogController::MODELS))
         ->whereNumber('item')
         ->name('admin.catalog.update-status');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/{user}', [UserController::class, 'show'])
+        ->whereNumber('user')
+        ->name('admin.users.show');
 });
