@@ -25,4 +25,11 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
     Route::get('/categories/{category}', [CategoryController::class, 'show'])
         ->whereNumber('category')
         ->name('admin.categories.show');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::patch('/categories/{category}', [CategoryController::class, 'update'])
+        ->whereNumber('category')
+        ->name('admin.categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
+        ->whereNumber('category')
+        ->name('admin.categories.destroy');
 });
