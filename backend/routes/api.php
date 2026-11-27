@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CatalogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrentAdminController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\EnsureAccountIsActive;
@@ -58,4 +59,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])
         ->whereNumber('booking')
         ->name('admin.bookings.show');
+    Route::get('/payments', [PaymentController::class, 'index'])->name('admin.payments.index');
+    Route::get('/payments/{payment}', [PaymentController::class, 'show'])
+        ->whereNumber('payment')
+        ->name('admin.payments.show');
 });
