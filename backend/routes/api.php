@@ -17,4 +17,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
     Route::get('/providers/{provider}', [ProviderController::class, 'show'])
         ->whereNumber('provider')
         ->name('admin.providers.show');
+    Route::patch('/providers/{provider}/approval', [ProviderController::class, 'review'])
+        ->whereNumber('provider')
+        ->name('admin.providers.review');
 });

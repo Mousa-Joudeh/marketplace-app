@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\ReviewProvider;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ReviewProviderRequest;
 use App\Models\ProviderProfile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -45,6 +47,21 @@ class ProviderController extends Controller
                 'approval_status',
                 'created_at',
             ]),
+        ]);
+    }
+
+    public function review(ReviewProviderRequest $request, ReviewProvider $review, string $provider): JsonResponse
+    {
+        $decision = $request->validated();
+        $profile = $review->execute(
+            $provider,
+            $request->user()->getAuthIdentifier(),
+            $decision['status'],
+            $decision['reason'],
+        );
+
+        return response()->json([
+            'data' => $profile->only(['id', 'approval_status']),
         ]);
     }
 }
