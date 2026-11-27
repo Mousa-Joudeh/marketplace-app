@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -42,51 +41,6 @@ return new class extends Migration
 
             $table->softDeletes();
         });
-        $validSpace = <<<'SQL'
-            capacity > 0
-            AND booking_buffer_minutes >= 0
-            AND (area_sqm IS NULL OR area_sqm > 0)
-            AND (min_booking_minutes IS NULL OR min_booking_minutes > 0)
-            AND (
-                max_booking_minutes IS NULL
-                OR (
-                    max_booking_minutes > 0
-                    AND (min_booking_minutes IS NULL OR max_booking_minutes >= min_booking_minutes)
-                )
-            )
-            SQL;
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $validNewRow = strtr($validSpace, [
-                'capacity' => 'NEW.capacity',
-                'booking_buffer_minutes' => 'NEW.booking_buffer_minutes',
-                'area_sqm' => 'NEW.area_sqm',
-                'min_booking_minutes' => 'NEW.min_booking_minutes',
-                'max_booking_minutes' => 'NEW.max_booking_minutes',
-            ]);
-
-            foreach (['INSERT', 'UPDATE'] as $operation) {
-                $triggerName = 'spaces_validate_' . strtolower($operation);
-
-                DB::statement(<<<SQL
-                    CREATE TRIGGER {$triggerName}
-                    BEFORE {$operation} ON spaces
-                    FOR EACH ROW
-                    WHEN NOT ({$validNewRow})
-                    BEGIN
-                        SELECT RAISE(ABORT, 'Invalid space capacity or booking settings.');
-                    END;
-                    SQL);
-            }
-
-            return;
-        }
-
-        DB::statement(<<<SQL
-            ALTER TABLE spaces
-            ADD CONSTRAINT chk_space_capacity_duration
-            CHECK ({$validSpace})
-            SQL);
     }
 
     /**

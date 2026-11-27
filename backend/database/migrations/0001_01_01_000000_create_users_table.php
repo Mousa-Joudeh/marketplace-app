@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -29,27 +28,6 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            foreach (['INSERT', 'UPDATE'] as $operation) {
-                $triggerName = 'users_require_login_on_' . strtolower($operation);
-
-                DB::statement(<<<SQL
-                    CREATE TRIGGER {$triggerName}
-                    BEFORE {$operation} ON users
-                    FOR EACH ROW
-                    WHEN NEW.password IS NULL AND NEW.google_id IS NULL
-                    BEGIN
-                        SELECT RAISE(ABORT, 'A user must have a login method.');
-                    END;
-                    SQL);
-            }
-        } else {
-            DB::statement(<<<'SQL'
-                ALTER TABLE users
-                ADD CONSTRAINT chk_user_login_method
-                CHECK (password IS NOT NULL OR google_id IS NOT NULL)
-                SQL);
-        }
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
