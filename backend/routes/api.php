@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CatalogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrentAdminController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -32,4 +33,11 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
         ->whereNumber('category')
         ->name('admin.categories.destroy');
+    Route::get('/catalog/{type}', [CatalogController::class, 'index'])
+        ->whereIn('type', array_keys(CatalogController::MODELS))
+        ->name('admin.catalog.index');
+    Route::get('/catalog/{type}/{item}', [CatalogController::class, 'show'])
+        ->whereIn('type', array_keys(CatalogController::MODELS))
+        ->whereNumber('item')
+        ->name('admin.catalog.show');
 });
