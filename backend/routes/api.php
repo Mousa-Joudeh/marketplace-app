@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CurrentAdminController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,4 +11,5 @@ Route::get('/user', function (Request $request) {
 
 Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(function () {
     Route::get('/me', CurrentAdminController::class)->name('admin.me');
+    Route::get('/dashboard', DashboardController::class)->name('admin.dashboard');
 });
