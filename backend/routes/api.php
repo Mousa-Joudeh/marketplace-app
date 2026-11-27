@@ -40,4 +40,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
         ->whereIn('type', array_keys(CatalogController::MODELS))
         ->whereNumber('item')
         ->name('admin.catalog.show');
+    Route::patch('/catalog/{type}/{item}/status', [CatalogController::class, 'updateStatus'])
+        ->whereIn('type', array_keys(CatalogController::MODELS))
+        ->whereNumber('item')
+        ->name('admin.catalog.update-status');
 });

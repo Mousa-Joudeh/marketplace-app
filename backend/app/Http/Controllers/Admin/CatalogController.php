@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\UpdateCatalogStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ListCatalogRequest;
+use App\Http\Requests\Admin\UpdateCatalogStatusRequest;
 use App\Models\Package;
 use App\Models\Service;
 use App\Models\Space;
@@ -64,6 +66,26 @@ class CatalogController extends Controller
                 ...$listing->toArray(),
                 'images' => $images,
             ],
+        ]);
+    }
+
+    public function updateStatus(
+        UpdateCatalogStatusRequest $request,
+        UpdateCatalogStatus $update,
+        string $type,
+        string $item,
+    ): JsonResponse {
+        $decision = $request->validated();
+        $listing = $update->execute(
+            self::MODELS[$type],
+            $item,
+            $request->user()->getAuthIdentifier(),
+            $decision['status'],
+            $decision['reason'] ?? null,
+        );
+
+        return response()->json([
+            'data' => $listing->only(['id', 'status']),
         ]);
     }
 
