@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CatalogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrentAdminController;
@@ -53,4 +54,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
     Route::patch('/users/{user}/status', [UserController::class, 'updateStatus'])
         ->whereNumber('user')
         ->name('admin.users.update-status');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('admin.bookings.index');
+    Route::get('/bookings/{booking}', [BookingController::class, 'show'])
+        ->whereNumber('booking')
+        ->name('admin.bookings.show');
 });
