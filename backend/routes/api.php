@@ -68,4 +68,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
     Route::get('/reviews/{review}', [ReviewController::class, 'show'])
         ->whereNumber('review')
         ->name('admin.reviews.show');
+    Route::patch('/reviews/{review}/status', [ReviewController::class, 'updateStatus'])
+        ->whereNumber('review')
+        ->name('admin.reviews.update-status');
 });

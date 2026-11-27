@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\UpdateReviewStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ListReviewsRequest;
+use App\Http\Requests\Admin\UpdateReviewStatusRequest;
 use App\Models\Review;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +13,8 @@ use Illuminate\Http\JsonResponse;
 class ReviewController extends Controller
 {
     private const LIST_FIELDS = ['id', 'booking_id', 'title', 'rating', 'status', 'is_anonymous', 'created_at'];
+
+    private const MODERATION_FIELDS = ['moderation_reason', 'moderated_by_user_id', 'moderated_at'];
 
     public function index(ListReviewsRequest $request): JsonResponse
     {
@@ -43,9 +47,27 @@ class ReviewController extends Controller
                 ...self::LIST_FIELDS,
                 'comment', 'quality_rating', 'communication_rating', 'value_rating',
                 'provider_reply', 'provider_replied_at', 'review_media',
-                'moderation_reason', 'moderated_at', 'updated_at',
+                ...self::MODERATION_FIELDS, 'updated_at',
             ]);
 
         return response()->json(['data' => $record]);
+    }
+
+    public function updateStatus(
+        UpdateReviewStatusRequest $request,
+        UpdateReviewStatus $update,
+        string $review,
+    ): JsonResponse {
+        $change = $request->validated();
+        $record = $update->execute(
+            $review,
+            $request->user()->getAuthIdentifier(),
+            $change['status'],
+            $change['reason'],
+        );
+
+        return response()->json([
+            'data' => $record->only(['id', 'status', ...self::MODERATION_FIELDS]),
+        ]);
     }
 }
