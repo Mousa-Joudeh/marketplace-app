@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrentAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProviderController;
@@ -20,4 +21,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
     Route::patch('/providers/{provider}/approval', [ProviderController::class, 'review'])
         ->whereNumber('provider')
         ->name('admin.providers.review');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::get('/categories/{category}', [CategoryController::class, 'show'])
+        ->whereNumber('category')
+        ->name('admin.categories.show');
 });
