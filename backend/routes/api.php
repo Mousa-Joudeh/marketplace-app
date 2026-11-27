@@ -6,14 +6,15 @@ use App\Http\Controllers\Admin\CurrentAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Middleware\EnsureAccountIsActive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware(['auth:sanctum', EnsureAccountIsActive::class]);
 
-Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class, 'can:access-admin'])->group(function () {
     Route::get('/me', CurrentAdminController::class)->name('admin.me');
     Route::get('/dashboard', DashboardController::class)->name('admin.dashboard');
     Route::get('/providers', [ProviderController::class, 'index'])->name('admin.providers.index');
@@ -49,4 +50,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
     Route::get('/users/{user}', [UserController::class, 'show'])
         ->whereNumber('user')
         ->name('admin.users.show');
+    Route::patch('/users/{user}/status', [UserController::class, 'updateStatus'])
+        ->whereNumber('user')
+        ->name('admin.users.update-status');
 });

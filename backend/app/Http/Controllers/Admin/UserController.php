@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\UpdateUserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ListUsersRequest;
+use App\Http\Requests\Admin\UpdateUserStatusRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -49,5 +51,21 @@ class UserController extends Controller
                 'provider_profile' => $providerProfile,
             ],
         ]);
+    }
+
+    public function updateStatus(
+        UpdateUserStatusRequest $request,
+        UpdateUserStatus $update,
+        string $user,
+    ): JsonResponse {
+        $change = $request->validated();
+        $account = $update->execute(
+            $user,
+            $request->user()->getAuthIdentifier(),
+            $change['status'],
+            $change['reason'],
+        );
+
+        return response()->json(['data' => $account->only(['id', 'status'])]);
     }
 }
