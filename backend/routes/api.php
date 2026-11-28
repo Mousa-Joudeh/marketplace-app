@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminInsightsController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CatalogController;
@@ -75,4 +76,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
         ->name('admin.reviews.update-status');
     Route::get('/work-queue', WorkQueueController::class)->name('admin.work-queue');
     Route::get('/analytics', AnalyticsController::class)->name('admin.analytics');
+    Route::post('/ai/insights', AdminInsightsController::class)
+        ->middleware('throttle:5,1')
+        ->name('admin.ai.insights');
 });
