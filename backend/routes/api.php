@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WorkQueueController;
 use App\Http\Middleware\EnsureAccountIsActive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -71,4 +72,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
     Route::patch('/reviews/{review}/status', [ReviewController::class, 'updateStatus'])
         ->whereNumber('review')
         ->name('admin.reviews.update-status');
+    Route::get('/work-queue', WorkQueueController::class)->name('admin.work-queue');
 });
