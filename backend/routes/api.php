@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CatalogController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -73,4 +74,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
         ->whereNumber('review')
         ->name('admin.reviews.update-status');
     Route::get('/work-queue', WorkQueueController::class)->name('admin.work-queue');
+    Route::get('/analytics', AnalyticsController::class)->name('admin.analytics');
 });
