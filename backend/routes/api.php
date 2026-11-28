@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminInsightsController;
+use App\Http\Controllers\Admin\AiOperationsController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CatalogController;
@@ -79,4 +80,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', EnsureAccountIsActive::class
     Route::post('/ai/insights', AdminInsightsController::class)
         ->middleware('throttle:5,1')
         ->name('admin.ai.insights');
+    Route::get('/ai/operations', AiOperationsController::class)->name('admin.ai.operations');
 });
